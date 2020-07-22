@@ -1,0 +1,95 @@
+{
+  "name": "@allejo/beatrice",
+  "description": "A tool to keep an inventory of when features were introduced in a library or framework",
+  "license": "MIT",
+  "author": {
+    "name": "Vladimir Jimenez @allejo"
+  },
+  "homepage": "https://github.com/allejo/beatrice",
+  "repository": "allejo/beatrice",
+  "bugs": "https://github.com/allejo/beatrice/issues",
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "bin": {
+    "beatrice": "./bin/run"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "scripts": {
+    "prepack": "rm -rf lib && tsc -b && oclif-dev manifest && oclif-dev readme",
+    "postpack": "rm -f oclif.manifest.json",
+    "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
+    "posttest": "eslint . --ext .ts --config .eslintrc",
+    "prettify": "npm-run-all prettify:auto:*",
+    "prettify:auto:code": "prettier --list-different --write \"{.github,src}/**/*.{ts,yaml,yml}\"",
+    "prettify:auto:package-json": "prettier-package-json --expand-users --write ./package.json",
+    "prettify:raw:code": "prettier --list-different --write",
+    "prettify:raw:package-json": "prettier-package-json --expand-users --write",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts",
+  "dependencies": {
+    "@oclif/command": "^1",
+    "@oclif/config": "^1",
+    "@oclif/plugin-help": "^3",
+    "isomorphic-git": "^1.7.3",
+    "php-parser": "^3.0.1",
+    "semver": "^7.3.2",
+    "tslib": "^1"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1",
+    "@oclif/test": "^1",
+    "@types/chai": "^4",
+    "@types/mocha": "^5",
+    "@types/node": "^10",
+    "@types/semver": "^7.3.1",
+    "chai": "^4",
+    "eslint": "^5.13",
+    "eslint-config-oclif": "^3.1",
+    "eslint-config-oclif-typescript": "^0.1",
+    "globby": "^10",
+    "husky": "^4.2.5",
+    "import-sort-style-module": "^6.0.0",
+    "mocha": "^5",
+    "npm-run-all": "^4.1.5",
+    "nyc": "^14",
+    "prettier": "^1.19.1",
+    "prettier-check": "^2.0.0",
+    "prettier-package-json": "^2.1.3",
+    "prettier-plugin-import-sort": "0.0.3",
+    "ts-node": "^8",
+    "typescript": "^3.3"
+  },
+  "keywords": [
+    "oclif"
+  ],
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "importSort": {
+    ".js, .jsx, .ts, .tsx": {
+      "style": "module"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,yaml,yml}": "yarn prettify:raw:code",
+    "package.json": "yarn prettify:raw:package-json"
+  },
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "beatrice",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  }
+}
