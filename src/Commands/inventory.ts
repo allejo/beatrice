@@ -19,13 +19,13 @@ export default class Inventory extends Command {
     const vcsManager = new GitManager(args.directory, this.log, this.error);
     vcsManager.includePreReleases = flags.prereleases;
 
-    await vcsManager.startWorkflow();
+    await vcsManager.onStart();
     const tags = vcsManager.getVersions();
 
     for await (const [semVer, tag] of tags) {
-      await vcsManager.switchVersion(semVer, tag);
+      await vcsManager.onVersionPreSwitch(semVer, tag);
     }
 
-    await vcsManager.finishWorkflow();
+    await vcsManager.onFinish();
   }
 }

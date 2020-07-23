@@ -11,11 +11,11 @@ export class GitManager extends BaseManager {
 
   static vcsType = "Git";
 
-  async startWorkflow(): Promise<void> {
+  async onStart(): Promise<void> {
     this.startingCommit = await this.getCurrentBranch();
   }
 
-  async switchVersion(version: SemVer, tag: string): Promise<void> {
+  async onVersionPreSwitch(version: SemVer, tag: string): Promise<void> {
     this.outputLog(`Using tag: ${tag}`);
     await git.checkout({
       fs,
@@ -24,7 +24,11 @@ export class GitManager extends BaseManager {
     });
   }
 
-  async finishWorkflow(): Promise<void> {
+  onVersionPostSwitch(version: SemVer, tar: string): Promise<void> {
+    return Promise.resolve(undefined);
+  }
+
+  async onFinish(): Promise<void> {
     await git.checkout({
       fs,
       dir: this.directory,

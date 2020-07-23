@@ -17,13 +17,15 @@ export abstract class BaseManager implements IVersionControlManager {
     }
   }
 
-  abstract startWorkflow(): Promise<void>;
-
-  abstract switchVersion(version: SemVer, tag: string): Promise<void>;
-
-  abstract finishWorkflow(): Promise<void>;
-
   abstract getVersions(): AsyncIterableIterator<[SemVer, string]>;
 
   abstract isValidRepository(): boolean;
+
+  abstract onStart(): Promise<void>;
+
+  abstract onVersionPreSwitch(version: SemVer, tag: string): Promise<void>;
+
+  abstract onVersionPostSwitch(version: SemVer, tar: string): Promise<void>;
+
+  abstract onFinish(): Promise<void>;
 }
