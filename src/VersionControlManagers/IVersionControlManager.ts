@@ -3,7 +3,7 @@ import { SemVer } from "semver";
 export interface IVersionControlManager {
   includePreReleases: boolean;
 
-  getVersions(): AsyncIterableIterator<SemVer>;
+  getVersions(): AsyncIterableIterator<[SemVer, string]>;
 
   isValidRepository(): boolean;
 }

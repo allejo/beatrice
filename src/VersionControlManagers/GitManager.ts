@@ -7,9 +7,32 @@ import { SemVer, parse } from "semver";
 import { BaseManager } from "./BaseManager";
 
 export class GitManager extends BaseManager {
+  private startingCommit: string = "";
+
   static vcsType = "Git";
 
-  async *getVersions(): AsyncIterableIterator<SemVer> {
+  async startWorkflow(): Promise<void> {
+    this.startingCommit = await this.getCurrentBranch();
+  }
+
+  async switchVersion(version: SemVer, tag: string): Promise<void> {
+    this.outputLog(`Using tag: ${tag}`);
+    await git.checkout({
+      fs,
+      dir: this.directory,
+      ref: tag
+    });
+  }
+
+  async finishWorkflow(): Promise<void> {
+    await git.checkout({
+      fs,
+      dir: this.directory,
+      ref: this.startingCommit
+    });
+  }
+
+  async *getVersions(): AsyncIterableIterator<[SemVer, string]> {
     const rawTags: string[] = await git.listTags({ fs, dir: this.directory });
 
     for (let i = 0; i < rawTags.length; i++) {
@@ -21,7 +44,7 @@ export class GitManager extends BaseManager {
           continue;
         }
 
-        yield tag;
+        yield [tag, rawTag];
       } else {
         this.outputError(
           `Following tag could not be parsed as semver: ${rawTags}`
@@ -34,5 +57,19 @@ export class GitManager extends BaseManager {
     const dir = `${this.directory}/.git`;
 
     return existsSync(dir) && lstatSync(dir).isDirectory();
+  }
+
+  private async getCurrentBranch(): Promise<string> {
+    const branch: string | void = await git.currentBranch({
+      fs,
+      dir: this.directory,
+      fullname: false
+    });
+
+    if (typeof branch !== "string") {
+      return "";
+    }
+
+    return branch;
   }
 }

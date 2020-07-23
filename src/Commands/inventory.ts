@@ -15,13 +15,17 @@ export default class Inventory extends Command {
 
   async run() {
     const { args, flags } = this.parse(Inventory);
-    const vcsManager = new GitManager(args.directory, this.error);
+
+    const vcsManager = new GitManager(args.directory, this.log, this.error);
     vcsManager.includePreReleases = flags.prereleases;
 
+    await vcsManager.startWorkflow();
     const tags = vcsManager.getVersions();
 
-    for await (const tag of tags) {
-      console.log(tag);
+    for await (const [semVer, tag] of tags) {
+      await vcsManager.switchVersion(semVer, tag);
     }
+
+    await vcsManager.finishWorkflow();
   }
 }
