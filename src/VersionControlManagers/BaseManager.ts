@@ -2,7 +2,8 @@ import { SemVer } from "semver";
 
 import { IVersionControlManager } from "./IVersionControlManager";
 
-export abstract class BaseManager implements IVersionControlManager {
+export abstract class BaseManager<RefType>
+  implements IVersionControlManager<RefType> {
   includePreReleases: boolean = false;
 
   static vcsType: string = "";
@@ -17,15 +18,15 @@ export abstract class BaseManager implements IVersionControlManager {
     }
   }
 
-  abstract getVersions(): AsyncIterableIterator<[SemVer, string]>;
-
-  abstract isValidRepository(): boolean;
+  abstract getVersions(): AsyncIterableIterator<[SemVer, RefType]>;
 
   abstract onStart(): Promise<void>;
 
-  abstract onVersionPreSwitch(version: SemVer, tag: string): Promise<void>;
+  abstract onVersionPreSwitch(version: SemVer, tag: RefType): Promise<void>;
 
-  abstract onVersionPostSwitch(version: SemVer, tar: string): Promise<void>;
+  abstract onVersionPostSwitch(version: SemVer, tar: RefType): Promise<void>;
 
   abstract onFinish(): Promise<void>;
+
+  protected abstract isValidRepository(): boolean;
 }

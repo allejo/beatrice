@@ -1,9 +1,15 @@
 import { SemVer } from "semver";
 
-export interface IVersionControlManager {
+export interface IVersionControlManager<RefType> {
   includePreReleases: boolean;
 
-  getVersions(): AsyncIterableIterator<[SemVer, string]>;
+  getVersions(): AsyncIterableIterator<[SemVer, RefType]>;
 
-  isValidRepository(): boolean;
+  onStart(): Promise<void>;
+
+  onVersionPreSwitch(version: SemVer, tag: RefType): Promise<void>;
+
+  onVersionPostSwitch(version: SemVer, tag: RefType): Promise<void>;
+
+  onFinish(): Promise<void>;
 }

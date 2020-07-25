@@ -36,7 +36,9 @@
     "@oclif/command": "^1",
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
-    "isomorphic-git": "^1.7.3",
+    "@types/nodegit": "^0.26.7",
+    "lint-staged": "^10.2.11",
+    "nodegit": "^0.26.5",
     "php-parser": "^3.0.1",
     "semver": "^7.3.2",
     "tslib": "^1"
