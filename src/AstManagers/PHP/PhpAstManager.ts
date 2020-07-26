@@ -11,7 +11,7 @@ import Engine, {
 
 import { assumeType } from "../../Utilities";
 import BaseAstManager from "../BaseAstManager";
-import { PhpFile } from "./PhpNode";
+import { PhpFile } from "./PhpRegistryTypes";
 
 export default class PhpAstManager extends BaseAstManager<PhpFile> {
   private readonly parser: Engine;

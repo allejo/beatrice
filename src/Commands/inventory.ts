@@ -1,7 +1,7 @@
 import { Command, flags } from "@oclif/command";
 
 import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
-import { PhpFile } from "../AstManagers/PHP/PhpNode";
+import { PhpFile } from "../AstManagers/PHP/PhpRegistryTypes";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 import { FullVersionHistory } from "../VersionRegistry";
 
