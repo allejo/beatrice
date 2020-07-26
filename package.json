@@ -93,5 +93,8 @@
     "plugins": [
       "@oclif/plugin-help"
     ]
+  },
+  "prettier": {
+    "trailingComma": "all"
   }
 }

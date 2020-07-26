@@ -10,7 +10,7 @@ export abstract class BaseManager<Ref> implements IVersionControlManager<Ref> {
   constructor(
     protected directory: string,
     protected outputLog: (msg: string) => void,
-    protected outputError: (msg: string) => void
+    protected outputError: (msg: string) => void,
   ) {
     if (!this.isValidRepository()) {
       throw new Error(`This is not a valid ${BaseManager.vcsType} repository.`);

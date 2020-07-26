@@ -1,5 +1,13 @@
-interface IAstManager {
-  parseFile(filePath: string): void;
+import { SemVer } from "semver";
 
-  walkRepository(repoDir: string, srcDirs: string[]): Promise<void>;
+import { VersionRegistry } from "../VersionRegistry";
+
+export interface IAstManager<T> {
+  parseFile(filePath: string): T;
+
+  walkRepository(
+    repoDir: string,
+    srcDirs: string[],
+    semVer: SemVer,
+  ): Promise<VersionRegistry<T>>;
 }

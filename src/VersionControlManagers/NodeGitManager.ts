@@ -64,7 +64,7 @@ export class NodeGitManager extends BaseManager<Reference> {
         yield [tagSemVer, reference];
       } else {
         this.outputError(
-          `Following tag could not be parsed as semver: ${tagReference}`
+          `Following tag could not be parsed as semver: ${tagReference}`,
         );
       }
     }

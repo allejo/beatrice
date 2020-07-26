@@ -9,12 +9,12 @@ export default class Inventory extends Command {
   static flags = {
     lang: flags.string({ char: "l", description: "The language to parse" }),
     force: flags.boolean({ char: "f" }),
-    prereleases: flags.boolean({ char: "p" })
+    prereleases: flags.boolean({ char: "p" }),
   };
 
   static args = [
     { name: "repoDir", required: true },
-    { name: "srcDirs", required: true }
+    { name: "srcDirs", required: true },
   ];
 
   async run() {
@@ -31,7 +31,7 @@ export default class Inventory extends Command {
       await vcsManager.onVersionPreSwitch(semVer, tag);
 
       const srcDirs = args.srcDirs.split(",");
-      await phpAstManager.walkRepository(args.repoDir, srcDirs);
+      await phpAstManager.walkRepository(args.repoDir, srcDirs, semVer);
 
       await vcsManager.onVersionPostSwitch(semVer, tag);
     }
