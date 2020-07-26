@@ -1,7 +1,9 @@
 import { Command, flags } from "@oclif/command";
 
 import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
+import { PhpFile } from "../AstManagers/PHP/PhpFile";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
+import { FullVersionHistory } from "../VersionRegistry";
 
 export default class Inventory extends Command {
   static description = "Create an inventory of an API";
@@ -25,17 +27,26 @@ export default class Inventory extends Command {
     vcsManager.includePreReleases = flags.prereleases;
 
     await vcsManager.onStart();
+    const fullVersionHistory: FullVersionHistory<PhpFile> = {};
     const tags = vcsManager.getVersions();
 
     for await (const [semVer, tag] of tags) {
       await vcsManager.onVersionPreSwitch(semVer, tag);
 
       const srcDirs = args.srcDirs.split(",");
-      await phpAstManager.walkRepository(args.repoDir, srcDirs, semVer);
+      const tagName = tag.name().replace("refs/tags/", "");
+
+      fullVersionHistory[tagName] = await phpAstManager.walkRepository(
+        args.repoDir,
+        srcDirs,
+        semVer,
+      );
 
       await vcsManager.onVersionPostSwitch(semVer, tag);
     }
 
     await vcsManager.onFinish();
+
+    console.log(fullVersionHistory);
   }
 }

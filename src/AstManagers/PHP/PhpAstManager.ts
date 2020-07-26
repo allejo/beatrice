@@ -24,8 +24,7 @@ export default class PhpAstManager extends BaseAstManager<PhpFile> {
   public parseFile(filePath: string): PhpFile {
     const content = readFileSync(filePath, "utf8");
     const ast = this.parser.parseCode(content);
-
-    console.log(ast);
+    const t = 1;
 
     return {
       file: filePath,

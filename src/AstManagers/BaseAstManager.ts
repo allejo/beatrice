@@ -23,7 +23,10 @@ export default abstract class BaseAstManager<T> implements IAstManager<T> {
     };
 
     for (const tgtSrcDir of tgtSrcDirs) {
-      await this.walkDir(tgtSrcDir);
+      output.files = {
+        ...output.files,
+        ...(await this.walkDir(tgtSrcDir)),
+      };
     }
 
     return output;
@@ -33,14 +36,17 @@ export default abstract class BaseAstManager<T> implements IAstManager<T> {
 
   private async walkDir(srcDirPath: string): Promise<Record<string, T>> {
     const dir = fs.readdir(srcDirPath);
-    const files: Record<string, T> = {};
+    let files: Record<string, T> = {};
 
     for (const fileOrDirName of await dir) {
       const absPath = join(srcDirPath, fileOrDirName);
       const fsObj = await fs.stat(absPath);
 
       if (fsObj.isDirectory()) {
-        await this.walkDir(absPath);
+        files = {
+          ...files,
+          ...(await this.walkDir(absPath)),
+        };
       } else {
         files[absPath] = this.parseFile(absPath);
       }
