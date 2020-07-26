@@ -1,7 +1,7 @@
 import { Command, flags } from "@oclif/command";
 
 import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
-import { PhpFile } from "../AstManagers/PHP/PhpFile";
+import { PhpFile } from "../AstManagers/PHP/PhpNode";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 import { FullVersionHistory } from "../VersionRegistry";
 
@@ -47,6 +47,6 @@ export default class Inventory extends Command {
 
     await vcsManager.onFinish();
 
-    console.log(fullVersionHistory);
+    console.log(JSON.stringify(fullVersionHistory));
   }
 }
