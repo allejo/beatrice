@@ -1,5 +1,6 @@
 import { Command, flags } from "@oclif/command";
 
+import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 
 export default class Inventory extends Command {
@@ -11,12 +12,16 @@ export default class Inventory extends Command {
     prereleases: flags.boolean({ char: "p" })
   };
 
-  static args = [{ name: "directory" }];
+  static args = [
+    { name: "repoDir", required: true },
+    { name: "srcDirs", required: true }
+  ];
 
   async run() {
     const { args, flags } = this.parse(Inventory);
 
-    const vcsManager = new NodeGitManager(args.directory, this.log, this.error);
+    const phpAstManager = new PhpAstManager();
+    const vcsManager = new NodeGitManager(args.repoDir, this.log, this.error);
     vcsManager.includePreReleases = flags.prereleases;
 
     await vcsManager.onStart();
@@ -24,6 +29,10 @@ export default class Inventory extends Command {
 
     for await (const [semVer, tag] of tags) {
       await vcsManager.onVersionPreSwitch(semVer, tag);
+
+      const srcDirs = args.srcDirs.split(",");
+      await phpAstManager.walkRepository(args.repoDir, srcDirs);
+
       await vcsManager.onVersionPostSwitch(semVer, tag);
     }
 
