@@ -1,6 +1,7 @@
 import { Command, flags } from "@oclif/command";
 
 import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
+import PhpRegistryReducer from "../AstManagers/PHP/PhpRegistryReducer";
 import { PhpFile } from "../AstManagers/PHP/PhpRegistryTypes";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 import { FullVersionHistory } from "../VersionRegistry";
@@ -51,6 +52,9 @@ export default class Inventory extends Command {
 
 		await vcsManager.onFinish();
 
-		console.log(JSON.stringify(fullVersionHistory));
+		const reducer = new PhpRegistryReducer(args.repoDir);
+		const apiDiff = reducer.reduce(fullVersionHistory);
+
+		console.log(JSON.stringify(apiDiff));
 	}
 }
