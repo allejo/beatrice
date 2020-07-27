@@ -68,17 +68,17 @@ export default class PhpAstManager extends BaseAstManager<PhpFile> {
 		} else if (ast.kind === "class") {
 			assumeType<PHPClass>(ast);
 
+			const className = PhpAstManager.getName(ast.name);
+
+			fileRegistry.classes[className] = {
+				file: settings?.file || "",
+				namespace: settings?.namespace,
+				tagAdded: this.semVer!,
+				className: className,
+				functions: [],
+			};
+
 			ast.body.forEach(node => {
-				const className = PhpAstManager.getName(ast.name);
-
-				fileRegistry.classes[className] = {
-					file: settings?.file || "",
-					namespace: settings?.namespace,
-					tagAdded: this.semVer!,
-					className: className,
-					functions: [],
-				};
-
 				this.astTraversal(node, fileRegistry, {
 					...settings,
 					namespace: settings?.namespace,
