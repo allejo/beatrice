@@ -27,29 +27,9 @@ USAGE
 ```
 <!-- usagestop -->
 # Commands
-<!-- Commands -->
-* [`beatrice hello [FILE]`](#beatrice-hello-file)
+<!-- commands -->
 * [`beatrice help [COMMAND]`](#beatrice-help-command)
-
-## `beatrice hello [FILE]`
-
-describe the command here
-
-```
-USAGE
-  $ beatrice hello [FILE]
-
-OPTIONS
-  -f, --force
-  -h, --help       show CLI help
-  -n, --name=name  name to print
-
-EXAMPLE
-  $ beatrice hello
-  hello world from ./src/hello.ts!
-```
-
-_See code: [src/commands/hello.ts](https://github.com/allejo/beatrice/blob/v0.0.0/src/commands/hello.ts)_
+* [`beatrice inventory REPODIR SRCDIRS`](#beatrice-inventory-repodir-srcdirs)
 
 ## `beatrice help [COMMAND]`
 
@@ -67,4 +47,20 @@ OPTIONS
 ```
 
 _See code: [@oclif/plugin-help](https://github.com/oclif/plugin-help/blob/v3.1.0/src/commands/help.ts)_
+
+## `beatrice inventory REPODIR SRCDIRS`
+
+Create an inventory of an API
+
+```
+USAGE
+  $ beatrice inventory REPODIR SRCDIRS
+
+OPTIONS
+  -f, --force
+  -l, --lang=lang    The language to parse
+  -p, --prereleases
+```
+
+_See code: [src/commands/inventory.ts](https://github.com/allejo/beatrice/blob/v0.0.0/src/commands/inventory.ts)_
 <!-- commandsstop -->
