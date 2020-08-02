@@ -21,7 +21,7 @@ export class NodeGitManager extends BaseManager<Reference> {
 	}
 
 	async onVersionPreSwitch(version: SemVer, tag: Reference): Promise<void> {
-		this.outputLog(`Using tag: ${tag.name()}`);
+		this.outputLog(`Checking out tag: ${tag.name()}`);
 
 		await this.gitRepo?.checkoutRef(tag);
 	}
