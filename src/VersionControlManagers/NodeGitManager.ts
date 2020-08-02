@@ -7,6 +7,7 @@ import { BaseManager } from "./BaseManager";
 
 export class NodeGitManager extends BaseManager<Reference> {
 	private gitRepo: Repository | null = null;
+
 	private startingPoint: Reference | null = null;
 
 	static vcsType = "Git";

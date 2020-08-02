@@ -3,9 +3,9 @@ import { SemVer } from "semver";
 import { IVersionControlManager } from "./IVersionControlManager";
 
 export abstract class BaseManager<Ref> implements IVersionControlManager<Ref> {
-	includePreReleases: boolean = false;
+	includePreReleases = false;
 
-	static vcsType: string = "";
+	static vcsType = "";
 
 	constructor(
 		protected directory: string,
