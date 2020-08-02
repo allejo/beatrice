@@ -37,6 +37,7 @@
     "@oclif/config": "^1",
     "@oclif/plugin-help": "^3",
     "@types/nodegit": "^0.26.7",
+    "auto-bind": "^4.0.0",
     "lint-staged": "^10.2.11",
     "nodegit": "^0.26.5",
     "php-parser": "^3.0.1",

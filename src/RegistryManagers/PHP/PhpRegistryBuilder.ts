@@ -1,5 +1,6 @@
 import { readFileSync } from "fs";
 
+import * as autoBind from "auto-bind";
 import Engine, {
 	PHPClass,
 	PHPFunction,
@@ -9,8 +10,8 @@ import Engine, {
 	PHPProgram,
 } from "php-parser";
 
-import { assumeType } from "../../Utilities";
-import BaseRegistryBuilder from "../BaseRegistryBuilder";
+import { assumeType } from "../../Utilities/TypeCasting";
+import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
 import { PhpFile } from "./PhpRegistryTypes";
 
 export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
@@ -27,9 +28,11 @@ export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 				withPositions: true,
 			},
 		});
+
+		autoBind(this);
 	}
 
-	public parseFile(filePath: string): PhpFile {
+	parseFile(filePath: string): PhpFile {
 		const content = readFileSync(filePath, "utf8");
 		const ast: PHPProgram = this.parser.parseCode(content);
 		const fileRegistry: PhpFile = {
