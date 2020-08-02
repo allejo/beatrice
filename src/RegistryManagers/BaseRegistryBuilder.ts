@@ -4,9 +4,10 @@ import { join } from "path";
 import { SemVer } from "semver";
 
 import { VersionRegistry } from "../VersionRegistry";
-import { IAstManager } from "./IAstManager";
+import { IRegistryBuilder } from "./IRegistryBuilder";
 
-export default abstract class BaseAstManager<T> implements IAstManager<T> {
+export default abstract class BaseRegistryBuilder<T>
+	implements IRegistryBuilder<T> {
 	protected semVer: SemVer | null = null;
 
 	public async walkRepository(

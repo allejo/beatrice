@@ -10,10 +10,10 @@ import Engine, {
 } from "php-parser";
 
 import { assumeType } from "../../Utilities";
-import BaseAstManager from "../BaseAstManager";
+import BaseRegistryBuilder from "../BaseRegistryBuilder";
 import { PhpFile } from "./PhpRegistryTypes";
 
-export default class PhpAstManager extends BaseAstManager<PhpFile> {
+export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 	private readonly parser: Engine;
 
 	constructor() {
@@ -68,7 +68,7 @@ export default class PhpAstManager extends BaseAstManager<PhpFile> {
 		} else if (ast.kind === "class") {
 			assumeType<PHPClass>(ast);
 
-			const className = PhpAstManager.getName(ast.name);
+			const className = PhpRegistryBuilder.getName(ast.name);
 
 			fileRegistry.classes[className] = {
 				file: settings?.file || "",
@@ -88,7 +88,9 @@ export default class PhpAstManager extends BaseAstManager<PhpFile> {
 		} else if (ast.kind === "method") {
 			assumeType<PHPFunction>(ast);
 
-			const className = PhpAstManager.getName(settings?.className || "");
+			const className = PhpRegistryBuilder.getName(
+				settings?.className || "",
+			);
 
 			if (!className) {
 				return;
@@ -98,7 +100,7 @@ export default class PhpAstManager extends BaseAstManager<PhpFile> {
 				file: settings?.file || "",
 				namespace: settings?.namespace,
 				tagAdded: this.semVer!,
-				fxnName: PhpAstManager.getName(ast.name),
+				fxnName: PhpRegistryBuilder.getName(ast.name),
 			});
 		}
 	}

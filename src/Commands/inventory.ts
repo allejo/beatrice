@@ -1,8 +1,8 @@
 import { Command, flags } from "@oclif/command";
 
-import PhpAstManager from "../AstManagers/PHP/PhpAstManager";
-import PhpRegistryReducer from "../AstManagers/PHP/PhpRegistryReducer";
-import { PhpFile } from "../AstManagers/PHP/PhpRegistryTypes";
+import PhpRegistryBuilder from "../RegistryManagers/PHP/PhpRegistryBuilder";
+import PhpRegistryReducer from "../RegistryManagers/PHP/PhpRegistryReducer";
+import { PhpFile } from "../RegistryManagers/PHP/PhpRegistryTypes";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 import { FullVersionHistory } from "../VersionRegistry";
 
@@ -23,7 +23,7 @@ export default class Inventory extends Command {
 	async run() {
 		const { args, flags } = this.parse(Inventory);
 
-		const phpAstManager = new PhpAstManager();
+		const phpAstManager = new PhpRegistryBuilder();
 		const vcsManager = new NodeGitManager(
 			args.repoDir,
 			this.log,

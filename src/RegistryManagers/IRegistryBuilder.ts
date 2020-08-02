@@ -2,7 +2,7 @@ import { SemVer } from "semver";
 
 import { VersionRegistry } from "../VersionRegistry";
 
-export interface IAstManager<T> {
+export interface IRegistryBuilder<T> {
 	parseFile(filePath: string): T;
 
 	walkRepository(
