@@ -1,5 +1,6 @@
 import { Command, flags } from "@oclif/command";
 
+import PhpRegistryApplier from "../RegistryManagers/PHP/PhpRegistryApplier";
 import { PhpRegistryBuilder } from "../RegistryManagers/PHP/PhpRegistryBuilder";
 import { PhpRegistryReducer } from "../RegistryManagers/PHP/PhpRegistryReducer";
 import { PhpFile } from "../RegistryManagers/PHP/PhpRegistryTypes";
@@ -46,6 +47,9 @@ export default class Inventory extends Command {
 
 		const reducer = new PhpRegistryReducer(args.repoDir);
 		const apiDiff = reducer.reduce(fullVersionHistory);
+
+		const applier = new PhpRegistryApplier();
+		applier.apply(args.repoDir, apiDiff);
 
 		console.log(JSON.stringify(apiDiff));
 	}
