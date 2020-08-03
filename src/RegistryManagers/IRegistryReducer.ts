@@ -1,6 +1,6 @@
 import { FullVersionHistory } from "../VersionRegistry";
-import { IRegistryEntry } from "./IRegistryEntry";
+import { IRegistry } from "./IRegistry";
 
 export interface IRegistryReducer<V, R> {
-	reduce(fullVH: FullVersionHistory<V>): IRegistryEntry<R>;
+	reduce(fullVH: FullVersionHistory<V>): IRegistry<R>;
 }

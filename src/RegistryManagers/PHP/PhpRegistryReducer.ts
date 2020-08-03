@@ -1,7 +1,7 @@
 import { SemVer, lt } from "semver";
 
 import { FullVersionHistory, VersionRegistry } from "../../VersionRegistry";
-import { IRegistryEntry } from "../IRegistryEntry";
+import { IRegistry } from "../IRegistry";
 import { IRegistryReducer } from "../IRegistryReducer";
 import { PhpClass, PhpFile, PhpFunction, PhpRegistryEntry } from "./PhpRegistryTypes";
 
@@ -11,8 +11,8 @@ type SemVerLike = SemVer | string;
 export class PhpRegistryReducer implements IRegistryReducer<PhpFile, PhpRegistryEntry> {
 	constructor(readonly repoDirectory: string) {}
 
-	reduce(fullVH: FullVersionHistory<PhpFile>): IRegistryEntry<PhpRegistryEntry> {
-		const apiDiff: IRegistryEntry<PhpRegistryEntry> = {};
+	reduce(fullVH: FullVersionHistory<PhpFile>): IRegistry<PhpRegistryEntry> {
+		const apiDiff: IRegistry<PhpRegistryEntry> = {};
 
 		items(fullVH).forEach((releaseRegistry: VersionRegistry<PhpFile>) => {
 			items(releaseRegistry.files).forEach((file: PhpFile) => {
