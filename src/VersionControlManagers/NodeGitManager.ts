@@ -37,14 +37,10 @@ export class NodeGitManager extends BaseManager<Reference> {
 
 		this.gitRepo!.checkoutRef(this.startingPoint)
 			.then(() => {
-				this.outputLog(
-					"Original starting point of this repository restored.",
-				);
+				this.outputLog("Original starting point of this repository restored.");
 			})
 			.catch(() => {
-				this.outputError(
-					"Original starting point could not be restored.",
-				);
+				this.outputError("Original starting point could not be restored.");
 			});
 	}
 
@@ -60,10 +56,7 @@ export class NodeGitManager extends BaseManager<Reference> {
 			const tagSemVer: SemVer | null = parse(tagReference);
 
 			if (tagSemVer !== null) {
-				if (
-					tagSemVer.prerelease.length > 0 &&
-					!this.includePreReleases
-				) {
+				if (tagSemVer.prerelease.length > 0 && !this.includePreReleases) {
 					continue;
 				}
 
@@ -71,9 +64,7 @@ export class NodeGitManager extends BaseManager<Reference> {
 
 				yield [tagSemVer, reference];
 			} else {
-				this.outputError(
-					`Following tag could not be parsed as semver: ${tagReference}`,
-				);
+				this.outputError(`Following tag could not be parsed as semver: ${tagReference}`);
 			}
 		}
 	}

@@ -1,14 +1,7 @@
 import { readFileSync } from "fs";
 
 import * as autoBind from "auto-bind";
-import Engine, {
-	PHPClass,
-	PHPFunction,
-	PHPIdentifier,
-	PHPNamespace,
-	PHPNode,
-	PHPProgram,
-} from "php-parser";
+import Engine, { PHPClass, PHPFunction, PHPIdentifier, PHPNamespace, PHPNode, PHPProgram } from "php-parser";
 
 import { assumeType } from "../../Utilities/TypeCasting";
 import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
@@ -48,11 +41,7 @@ export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 		return fileRegistry;
 	}
 
-	private astTraversal(
-		ast: PHPNode,
-		fileRegistry: PhpFile,
-		settings?: Record<string, any>,
-	): void {
+	private astTraversal(ast: PHPNode, fileRegistry: PhpFile, settings?: Record<string, any>): void {
 		if (ast.kind === "program") {
 			assumeType<PHPProgram>(ast);
 
@@ -91,9 +80,7 @@ export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 		} else if (ast.kind === "method") {
 			assumeType<PHPFunction>(ast);
 
-			const className = PhpRegistryBuilder.getName(
-				settings?.className || "",
-			);
+			const className = PhpRegistryBuilder.getName(settings?.className || "");
 
 			if (!className) {
 				return;

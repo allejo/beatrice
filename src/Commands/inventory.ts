@@ -24,11 +24,7 @@ export default class Inventory extends Command {
 		const { args, flags } = this.parse(Inventory);
 
 		const phpAstManager = new PhpRegistryBuilder();
-		const vcsManager = new NodeGitManager(
-			args.repoDir,
-			this.log,
-			this.error,
-		);
+		const vcsManager = new NodeGitManager(args.repoDir, this.log, this.error);
 		vcsManager.includePreReleases = flags.prereleases;
 
 		await vcsManager.onStart();
@@ -41,11 +37,7 @@ export default class Inventory extends Command {
 			const srcDirs = args.srcDirs.split(",");
 			const tagName = tag.name().replace("refs/tags/", "");
 
-			fullVersionHistory[tagName] = await phpAstManager.walkRepository(
-				args.repoDir,
-				srcDirs,
-				semVer,
-			);
+			fullVersionHistory[tagName] = await phpAstManager.walkRepository(args.repoDir, srcDirs, semVer);
 
 			await vcsManager.onVersionPostSwitch(semVer, tag);
 		}

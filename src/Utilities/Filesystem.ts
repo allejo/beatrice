@@ -48,11 +48,7 @@ async function walkDir<T>(dir: string, cb: callback<T>): Promise<FileMap<T>> {
  * @param srcDirs
  * @param cb
  */
-export function walkRepository<T>(
-	repoDir: string,
-	srcDirs: string[],
-	cb: callback<T>,
-): Promise<VersionRegistry<T>> {
+export function walkRepository<T>(repoDir: string, srcDirs: string[], cb: callback<T>): Promise<VersionRegistry<T>> {
 	const tgtSrcDirs = srcDirs.map(srcDir => join(repoDir, srcDir));
 	const output: VersionRegistry<T> = {
 		repositoryDirectory: repoDir,
