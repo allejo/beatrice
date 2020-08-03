@@ -1,33 +1,50 @@
 import { SemVer, lt } from "semver";
 
 import { FullVersionHistory, VersionRegistry } from "../../VersionRegistry";
-import { PhpClass, PhpFile, PhpFunction } from "./PhpRegistryTypes";
+import { IRegistryEntry } from "../IRegistryEntry";
+import { IRegistryReducer } from "../IRegistryReducer";
+import { PhpClass, PhpFile, PhpFunction, PhpRegistryEntry } from "./PhpRegistryTypes";
 
 const items = (obj: object) => Object.values(obj);
 type SemVerLike = SemVer | string;
 
-export default class PhpRegistryReducer {
+export class PhpRegistryReducer implements IRegistryReducer<PhpFile, PhpRegistryEntry> {
 	constructor(readonly repoDirectory: string) {}
 
-	reduce(fullVH: FullVersionHistory<PhpFile>): Record<string, string> {
-		const apiDiff: Record<string, string> = {};
+	reduce(fullVH: FullVersionHistory<PhpFile>): IRegistryEntry<PhpRegistryEntry> {
+		const apiDiff: IRegistryEntry<PhpRegistryEntry> = {};
 
 		items(fullVH).forEach((releaseRegistry: VersionRegistry<PhpFile>) => {
 			items(releaseRegistry.files).forEach((file: PhpFile) => {
 				items(file.classes).forEach((cls: PhpClass) => {
 					const clsSig: string = this.getClassSignature(cls);
-					const prvClsVer: SemVerLike | null = apiDiff[clsSig];
+					const prvClsVer: SemVerLike | null = apiDiff[clsSig]?.semVer;
 
 					if (prvClsVer == null || lt(cls.tagAdded, prvClsVer)) {
-						apiDiff[clsSig] = this.semVerToStr(cls.tagAdded);
+						apiDiff[clsSig] = {
+							type: "class",
+							relativeFilePath: this.getRelFilePath(cls.file),
+							className: cls.className,
+							namespace: cls.namespace,
+							semVer: cls.tagAdded,
+							semVerStr: PhpRegistryReducer.semVerToStr(cls.tagAdded),
+						};
 					}
 
-					cls.functions.forEach((fxn: PhpFunction) => {
+					cls.methods.forEach((fxn: PhpFunction) => {
 						const fxnSig = this.getMethodSignature(fxn, cls);
-						const prvFxnVer: SemVerLike | null = apiDiff[fxnSig];
+						const prvFxnVer: SemVerLike | null = apiDiff[fxnSig]?.semVer;
 
 						if (prvFxnVer == null || lt(fxn.tagAdded, prvFxnVer)) {
-							apiDiff[fxnSig] = this.semVerToStr(fxn.tagAdded);
+							apiDiff[fxnSig] = {
+								type: "method",
+								relativeFilePath: this.getRelFilePath(cls.file),
+								className: cls.className,
+								namespace: cls.namespace,
+								semVer: cls.tagAdded,
+								semVerStr: PhpRegistryReducer.semVerToStr(fxn.tagAdded),
+								functionName: fxn.fxnName,
+							};
 						}
 					});
 				});
@@ -37,8 +54,12 @@ export default class PhpRegistryReducer {
 		return apiDiff;
 	}
 
+	private getRelFilePath(filePath: string) {
+		return filePath.replace(this.repoDirectory, "");
+	}
+
 	private getClassSignature(phpClass: PhpClass) {
-		const relPath = phpClass.file.replace(this.repoDirectory, "");
+		const relPath = this.getRelFilePath(phpClass.file);
 
 		return `${relPath}#${phpClass.namespace}\\${phpClass.className}`;
 	}
@@ -47,7 +68,7 @@ export default class PhpRegistryReducer {
 		return `${this.getClassSignature(cls)}::${methodSignature.fxnName}`;
 	}
 
-	private semVerToStr(semVer: SemVer | string): string {
+	private static semVerToStr(semVer: SemVer | string): string {
 		if (semVer instanceof SemVer) {
 			return semVer.version;
 		}

@@ -1,7 +1,7 @@
 import { Command, flags } from "@oclif/command";
 
-import PhpRegistryBuilder from "../RegistryManagers/PHP/PhpRegistryBuilder";
-import PhpRegistryReducer from "../RegistryManagers/PHP/PhpRegistryReducer";
+import { PhpRegistryBuilder } from "../RegistryManagers/PHP/PhpRegistryBuilder";
+import { PhpRegistryReducer } from "../RegistryManagers/PHP/PhpRegistryReducer";
 import { PhpFile } from "../RegistryManagers/PHP/PhpRegistryTypes";
 import { NodeGitManager } from "../VersionControlManagers/NodeGitManager";
 import { FullVersionHistory } from "../VersionRegistry";

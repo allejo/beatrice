@@ -7,7 +7,7 @@ import { assumeType } from "../../Utilities/TypeCasting";
 import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
 import { PhpFile } from "./PhpRegistryTypes";
 
-export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
+export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 	private readonly parser: Engine;
 
 	constructor() {
@@ -67,7 +67,7 @@ export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 				namespace: settings?.namespace,
 				tagAdded: this.semVer!,
 				className: className,
-				functions: [],
+				methods: [],
 			};
 
 			ast.body.forEach(node => {
@@ -86,7 +86,7 @@ export default class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 				return;
 			}
 
-			fileRegistry.classes[className].functions.push({
+			fileRegistry.classes[className].methods.push({
 				file: settings?.file || "",
 				namespace: settings?.namespace,
 				tagAdded: this.semVer!,

@@ -12,11 +12,19 @@ export interface PhpFunction extends Base {
 
 export interface PhpClass extends Base {
 	className: string;
-	functions: PhpFunction[];
+	methods: PhpFunction[];
 }
 
 export interface PhpFile {
 	file: string;
 	classes: Record<string, PhpClass>;
 	functions: Record<string, PhpFunction>;
+}
+
+export interface PhpRegistryEntry {
+	type: "class" | "method" | "function" | "property";
+	className?: string;
+	namespace?: string;
+	propertyName?: string;
+	functionName?: string;
 }
