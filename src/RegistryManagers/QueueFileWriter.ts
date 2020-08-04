@@ -1,7 +1,7 @@
 enum LineAction {
-	ADDITION,
-	REPLACEMENT,
-	DELETION,
+	ADDITION = "addition",
+	REPLACEMENT = "replacement",
+	DELETION = "deletion",
 }
 
 /**
@@ -20,30 +20,46 @@ export class QueueFileWriter {
 	}
 
 	insertLine(lineNo: number, line: string, replace: boolean = false): void {
-		if (this.actionQueue[lineNo] !== undefined && !replace) {
-			throw new Error(`There is already an insertion command at line ${lineNo}`);
-		}
+		this.checkConflict(lineNo, replace);
 
 		this.actionQueue[lineNo] = LineAction.ADDITION;
 		this.contentQueue[lineNo] = line;
 	}
 
 	insertLines(lineNo: number, lines: string[], replace: boolean = false): void {
-		if (this.actionQueue[lineNo] !== undefined && !replace) {
-			throw new Error(`There is already an insertion command at line ${lineNo}`);
-		}
+		this.checkConflict(lineNo, replace);
 
 		this.actionQueue[lineNo] = LineAction.ADDITION;
 		this.contentQueue[lineNo] = lines;
 	}
 
-	replaceLine(lineNo: number, line: string): void {}
+	replaceLine(lineNo: number, line: string, replace: boolean = false): void {
+		this.checkConflict(lineNo, replace);
 
-	replaceLines(lineNo: number, lines: string[]): void {}
+		this.actionQueue[lineNo] = LineAction.REPLACEMENT;
+		this.contentQueue[lineNo] = line;
+	}
 
-	removeLine(lineNo: number): void {}
+	replaceLines(lineNo: number, lines: string[], replace: boolean = false): void {
+		this.checkConflict(lineNo, replace);
 
-	removeLines(lineNo: number, count: number): void {}
+		this.actionQueue[lineNo] = LineAction.REPLACEMENT;
+		this.contentQueue[lineNo] = lines;
+	}
+
+	removeLine(lineNo: number, replace: boolean = false): void {
+		this.checkConflict(lineNo, replace);
+
+		this.actionQueue[lineNo] = LineAction.DELETION;
+	}
+
+	removeLines(lineNo: number, count: number, replace: boolean = false): void {
+		this.checkConflict(lineNo, replace);
+
+		for (let i = 0; i <= count; i++) {
+			this.actionQueue[lineNo + i] = LineAction.DELETION;
+		}
+	}
 
 	write(): string {
 		const newContent: (string | null)[] = [...this.rawContent];
@@ -82,5 +98,21 @@ export class QueueFileWriter {
 		});
 
 		return newContent.filter(l => l !== null).join("\n");
+	}
+
+	/**
+	 * Verify that there are no conflicts in actions queued for a given line number.
+	 *
+	 * @param lineNo
+	 * @param replace
+	 *
+	 * @throws Error when an action is already queued for a specific line
+	 */
+	private checkConflict(lineNo: number, replace: boolean): void {
+		const action: LineAction | undefined = this.actionQueue[lineNo];
+
+		if (action !== undefined && !replace) {
+			throw new Error(`There is already ${action} command at line ${lineNo}`);
+		}
 	}
 }
