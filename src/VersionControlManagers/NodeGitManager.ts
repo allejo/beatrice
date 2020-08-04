@@ -35,13 +35,13 @@ export class NodeGitManager extends BaseManager<Reference> {
 			return;
 		}
 
-		this.gitRepo!.checkoutRef(this.startingPoint)
-			.then(() => {
-				this.outputLog("Original starting point of this repository restored.");
-			})
-			.catch(() => {
-				this.outputError("Original starting point could not be restored.");
-			});
+		try {
+			await this.gitRepo!.checkoutRef(this.startingPoint);
+
+			this.outputLog("Original starting point of this repository restored.");
+		} catch {
+			this.outputError("Original starting point could not be restored.");
+		}
 	}
 
 	async *getVersions(): AsyncIterableIterator<[SemVer, Reference]> {
