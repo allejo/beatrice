@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 
 import * as autoBind from "auto-bind";
-import Engine, { PHPClass, PHPFunction, PHPIdentifier, PHPNamespace, PHPNode, PHPProgram } from "php-parser";
+import Engine, { Class, Function, Identifier, Namespace, Node, Program } from "php-parser";
 
 import { assumeType } from "../../Utilities/TypeCasting";
 import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
@@ -27,7 +27,7 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 
 	parseFile(filePath: string): PhpFile {
 		const content = readFileSync(filePath, "utf8");
-		const ast: PHPProgram = this.parser.parseCode(content);
+		const ast: Program = this.parser.parseCode(content);
 		const fileRegistry: PhpFile = {
 			file: filePath,
 			classes: {},
@@ -41,15 +41,15 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 		return fileRegistry;
 	}
 
-	private astTraversal(ast: PHPNode, fileRegistry: PhpFile, settings?: Record<string, any>): void {
+	private astTraversal(ast: Node, fileRegistry: PhpFile, settings?: Record<string, any>): void {
 		if (ast.kind === "program") {
-			assumeType<PHPProgram>(ast);
+			assumeType<Program>(ast);
 
 			ast.children.forEach(node => {
 				this.astTraversal(node, fileRegistry, settings);
 			});
 		} else if (ast.kind === "namespace") {
-			assumeType<PHPNamespace>(ast);
+			assumeType<Namespace>(ast);
 
 			ast.children.forEach(node => {
 				this.astTraversal(node, fileRegistry, {
@@ -58,7 +58,7 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 				});
 			});
 		} else if (ast.kind === "class") {
-			assumeType<PHPClass>(ast);
+			assumeType<Class>(ast);
 
 			const className = PhpRegistryBuilder.getName(ast.name);
 
@@ -78,7 +78,7 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 				});
 			});
 		} else if (ast.kind === "method") {
-			assumeType<PHPFunction>(ast);
+			assumeType<Function>(ast);
 
 			const className = PhpRegistryBuilder.getName(settings?.className || "");
 
@@ -95,7 +95,7 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 		}
 	}
 
-	private static getName(name: PHPIdentifier | string): string {
+	private static getName(name: Identifier | string): string {
 		if (typeof name === "string") {
 			return name;
 		}
