@@ -1,6 +1,6 @@
 import { Command, flags } from "@oclif/command";
 
-import PhpRegistryApplier from "../RegistryManagers/PHP/PhpRegistryApplier";
+import { PhpRegistryApplier } from "../RegistryManagers/PHP/PhpRegistryApplier";
 import { PhpRegistryBuilder } from "../RegistryManagers/PHP/PhpRegistryBuilder";
 import { PhpRegistryReducer } from "../RegistryManagers/PHP/PhpRegistryReducer";
 import { PhpFile } from "../RegistryManagers/PHP/PhpRegistryTypes";
@@ -31,11 +31,11 @@ export default class Inventory extends Command {
 		await vcsManager.onStart();
 		const fullVersionHistory: FullVersionHistory<PhpFile> = {};
 		const tags = vcsManager.getVersions();
+		const srcDirs = args.srcDirs.split(",");
 
 		for await (const [semVer, tag] of tags) {
 			await vcsManager.onVersionPreSwitch(semVer, tag);
 
-			const srcDirs = args.srcDirs.split(",");
 			const tagName = tag.name().replace("refs/tags/", "");
 
 			fullVersionHistory[tagName] = await phpAstManager.walkRepository(args.repoDir, srcDirs, semVer);
@@ -49,7 +49,7 @@ export default class Inventory extends Command {
 		const apiDiff = reducer.reduce(fullVersionHistory);
 
 		const applier = new PhpRegistryApplier();
-		applier.apply(args.repoDir, apiDiff);
+		applier.apply(args.repoDir, srcDirs, apiDiff);
 
 		console.log(JSON.stringify(apiDiff));
 	}

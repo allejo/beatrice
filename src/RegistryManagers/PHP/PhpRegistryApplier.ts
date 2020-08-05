@@ -1,15 +1,21 @@
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
+import { readFileSync } from "fs";
 
 import * as autoBind from "auto-bind";
-import Engine from "php-parser";
+import Engine, { Class, Function, Namespace, Node, Program } from "php-parser";
 
-import { IRegistry, IRegistryEntry } from "../IRegistry";
+import { walkRepository } from "../../Utilities/Filesystem";
+import { assumeType } from "../../Utilities/TypeCasting";
+import { IRegistry } from "../IRegistry";
 import { IRegistryApplier } from "../IRegistryApplier";
 import { QueueFileWriter } from "../QueueFileWriter";
 import { PhpRegistryEntry } from "./PhpRegistryTypes";
 
-export default class PhpRegistryApplier implements IRegistryApplier<PhpRegistryEntry> {
+interface AstCallbacks {
+	onClass: (cls: Class) => void;
+	onMethod: (cls: Function) => void;
+}
+
+export class PhpRegistryApplier implements IRegistryApplier<PhpRegistryEntry> {
 	private readonly parser: Engine;
 
 	constructor() {
@@ -25,27 +31,57 @@ export default class PhpRegistryApplier implements IRegistryApplier<PhpRegistryE
 		autoBind(this);
 	}
 
-	apply(directory: string, registry: IRegistry<PhpRegistryEntry>): void {
-		Object.values(registry).forEach((entry: IRegistryEntry<PhpRegistryEntry>) => {
-			const fullPath = join(directory, entry.relativeFilePath);
+	apply(directory: string, srcDirs: string[], registry: IRegistry<PhpRegistryEntry>): void {
+		walkRepository<void>(directory, srcDirs, (absFilePath: string): void => {
+			const fileContent = readFileSync(absFilePath, "utf8");
+			const writer = new QueueFileWriter(fileContent);
+			const ast = this.parser.parseCode(fileContent);
 
-			if (!existsSync(fullPath)) {
-				return;
-			}
+			this.astTraversal(ast, {
+				onClass: (cls: Class) => {
+					if (cls.leadingComments) {
+						// This class has an existing comment
+						const line = cls.leadingComments[0].loc.start;
+						const t = 1;
+					} else {
+						const startingLine = ast.loc.start;
 
-			const content = readFileSync(fullPath, "utf8");
-			const ast = this.parser.parseCode(content);
-
-			if (entry.type === "class") {
-				const fileWriter = new QueueFileWriter(content);
-				fileWriter.insertLines(17, ["/**", ` * @since ${entry.semVerStr}`, " */"]);
-				fileWriter.insertLine(48, `     * @since ${entry.semVerStr}`);
-
-				const q = fileWriter.write();
-				const t = 1;
-			}
-
-			const t = 1;
+						writer.insertLine(startingLine, ["/**", ` * @since {}`, " */"]);
+						const t = 1;
+					}
+				},
+				onMethod: (fxn: Function) => {},
+			});
+		}).catch(() => {
+			console.log("Welp, I errored out?");
 		});
+	}
+
+	private astTraversal(ast: Node, callbacks: AstCallbacks): void {
+		if (ast.kind === "program") {
+			assumeType<Program>(ast);
+
+			ast.children.forEach(node => {
+				this.astTraversal(node, callbacks);
+			});
+		} else if (ast.kind === "namespace") {
+			assumeType<Namespace>(ast);
+
+			ast.children.forEach(node => {
+				this.astTraversal(node, callbacks);
+			});
+		} else if (ast.kind === "class") {
+			assumeType<Class>(ast);
+
+			callbacks.onClass(ast);
+
+			ast.body.forEach(node => {
+				this.astTraversal(node, callbacks);
+			});
+		} else if (ast.kind === "method") {
+			assumeType<Function>(ast);
+
+			callbacks.onMethod(ast);
+		}
 	}
 }
