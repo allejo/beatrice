@@ -1,6 +1,6 @@
 import { readFileSync } from "fs";
 
-import * as autoBind from "auto-bind";
+import autoBind from "auto-bind";
 import Engine, { Class, Function, Identifier, Namespace, Node, Program } from "php-parser";
 
 import { assumeType } from "../../Utilities/TypeCasting";

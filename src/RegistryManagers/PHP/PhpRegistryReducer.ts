@@ -59,9 +59,7 @@ export class PhpRegistryReducer implements IRegistryReducer<PhpFile, PhpRegistry
 	}
 
 	private getClassSignature(phpClass: PhpClass) {
-		const relPath = this.getRelFilePath(phpClass.file);
-
-		return `${relPath}#${phpClass.namespace}\\${phpClass.className}`;
+		return `${phpClass.namespace}\\${phpClass.className}`;
 	}
 
 	private getMethodSignature(methodSignature: PhpFunction, cls: PhpClass) {

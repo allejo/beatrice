@@ -15,7 +15,7 @@ export class QueueFileWriter {
 	private actionQueue: Record<number, LineAction> = {};
 	private contentQueue: Record<number, string | string[]> = {};
 
-	constructor(content: string) {
+	constructor(content: string, public readonly filePath: string) {
 		this.rawContent = content.split("\n");
 	}
 

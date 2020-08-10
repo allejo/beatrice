@@ -41,7 +41,7 @@
 		"auto-bind": "^4.0.0",
 		"lint-staged": "^10.2.11",
 		"nodegit": "^0.26.5",
-		"php-parser": "^3.0.1",
+		"php-parser": "git+https://github.com/allejo/php-parser.git#ec265f2fd44c46a0bb3a346b72717cef05698966",
 		"semver": "^7.3.2",
 		"tslib": "^1",
 		"xregexp": "^4.3.0"
