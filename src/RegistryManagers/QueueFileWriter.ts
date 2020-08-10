@@ -19,45 +19,46 @@ export class QueueFileWriter {
 		this.rawContent = content.split("\n");
 	}
 
-	insertLine(lineNo: number, line: string, replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
+	insertLineAbove(lineNo: number, line: string, replace: boolean = false): void {
+		this.checkConflict(lineNo - 1, replace);
 
-		this.actionQueue[lineNo] = LineAction.ADDITION;
-		this.contentQueue[lineNo] = line;
+		this.actionQueue[lineNo - 1] = LineAction.ADDITION;
+		this.contentQueue[lineNo - 1] = line;
 	}
 
-	insertLines(lineNo: number, lines: string[], replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
+	insertLinesAbove(lineNo: number, lines: string[], replace: boolean = false): void {
+		this.checkConflict(lineNo - 1, replace);
 
-		this.actionQueue[lineNo] = LineAction.ADDITION;
-		this.contentQueue[lineNo] = lines;
+		this.actionQueue[lineNo - 1] = LineAction.ADDITION;
+		this.contentQueue[lineNo - 1] = lines;
 	}
 
 	replaceLine(lineNo: number, line: string, replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
+		this.checkConflict(lineNo - 1, replace);
 
-		this.actionQueue[lineNo] = LineAction.REPLACEMENT;
-		this.contentQueue[lineNo] = line;
+		this.actionQueue[lineNo - 1] = LineAction.REPLACEMENT;
+		this.contentQueue[lineNo - 1] = line;
 	}
 
-	replaceLines(lineNo: number, lines: string[], replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
+	replaceLines(start: number, end: number, lines: string[], replace: boolean = false): void {
+		this.checkConflict(start - 1, replace);
+		this.actionQueue[start - 1] = LineAction.REPLACEMENT;
+		this.contentQueue[start - 1] = lines;
 
-		this.actionQueue[lineNo] = LineAction.REPLACEMENT;
-		this.contentQueue[lineNo] = lines;
+		for (let i = start + 1; i <= end; i++) {
+			this.checkConflict(i - 1, replace);
+			this.actionQueue[i - 1] = LineAction.DELETION;
+		}
 	}
 
 	removeLine(lineNo: number, replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
-
-		this.actionQueue[lineNo] = LineAction.DELETION;
+		this.removeLines(lineNo, lineNo, replace);
 	}
 
-	removeLines(lineNo: number, count: number, replace: boolean = false): void {
-		this.checkConflict(lineNo, replace);
-
-		for (let i = 0; i <= count; i++) {
-			this.actionQueue[lineNo + i] = LineAction.DELETION;
+	removeLines(start: number, end: number, replace: boolean = false): void {
+		for (let i = start; i <= end; i++) {
+			this.checkConflict(i, replace);
+			this.actionQueue[i - 1] = LineAction.DELETION;
 		}
 	}
 
@@ -78,21 +79,19 @@ export class QueueFileWriter {
 				const content = this.contentQueue[lineNo];
 
 				if (typeof content === "string") {
-					newContent.splice(offset + lineNo - 1, 0, content);
+					newContent.splice(offset + lineNo, 0, content);
 					++offset;
 				} else {
-					newContent.splice(offset + lineNo - 1, 0, ...content);
+					newContent.splice(offset + lineNo, 0, ...content);
 					offset += content.length;
 				}
 			} else if (action === LineAction.REPLACEMENT) {
 				const content = this.contentQueue[lineNo];
 
 				if (typeof content === "string") {
-					newContent[offset + lineNo - 1] = content;
+					newContent[offset + lineNo] = content;
 				} else {
-					for (let i = 0; i < content.length; i++) {
-						newContent[offset + lineNo - 1] = content[i];
-					}
+					newContent.splice(offset + lineNo, 1, ...content);
 				}
 			}
 		});
