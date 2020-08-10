@@ -50,8 +50,10 @@ export class PhpRegistryApplier implements IRegistryApplier<PhpRegistryEntry> {
 
 			const applier = (writer: QueueFileWriter, node: Class | Function, options: Dictionary) => {
 				const signature = PhpRegistryApplier.getRegistrySignature(node, options);
-				let docBlock: DumbJavaDocParser;
-				let location: Location;
+				const semVerAdded = registry[signature]?.semVerStr ?? "future";
+
+				let docBlock: DumbJavaDocParser | null = null;
+				let location: Location | null = null;
 
 				if (node.leadingComments) {
 					const docBlocks: CommentBlock[] = node.leadingComments.filter(c => c.kind === "commentblock");
@@ -64,18 +66,25 @@ export class PhpRegistryApplier implements IRegistryApplier<PhpRegistryEntry> {
 							location = docBlockComment.loc;
 						}
 					}
+
+					if (!docBlock || !location) {
+						// @TODO log an error here too...?
+						return;
+					}
+
+					docBlock.addTag("since", semVerAdded);
+					writer.replaceLines(location.start.line, location.end.line, docBlock.writeAsArray());
+					writeFileSync(writer.filePath, writer.write());
 				} else {
 					if (!node.loc) {
-						// @TODO throw an error here?
+						// @TODO log an error here?
 						return;
 					}
 
 					location = node.loc;
 					docBlock = new DumbJavaDocParser("");
-					docBlock.addTag("since", registry[signature]?.semVerStr ?? "future");
-
-					writer.insertLines(location.start.line, docBlock.writeAsArray());
-
+					docBlock.addTag("since", semVerAdded);
+					writer.insertLinesAbove(location.start.line, docBlock.writeAsArray());
 					writeFileSync(writer.filePath, writer.write());
 				}
 			};

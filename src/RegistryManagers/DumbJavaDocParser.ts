@@ -50,14 +50,19 @@ export class DumbJavaDocParser {
 	 * @since future
 	 */
 	addTag(tagName: string, value: string, position: number = -1) {
-		const line = `@${tagName} ${value}`;
+		const tagLine = `@${tagName} ${value}`;
+		const hasTag = this.body.some(line => line.startsWith(tagLine));
 
-		if (position < 0) {
-			this.body.push(line);
+		if (hasTag) {
 			return;
 		}
 
-		this.body = this.body.splice(position, 0, line);
+		if (position < 0) {
+			this.body.push(tagLine);
+			return;
+		}
+
+		this.body = this.body.splice(position, 0, tagLine);
 	}
 
 	/**
