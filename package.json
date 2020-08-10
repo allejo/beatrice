@@ -25,7 +25,7 @@
 		"test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
 		"posttest": "eslint . --ext .ts --config .eslintrc.js",
 		"prettify": "npm-run-all prettify:auto:*",
-		"prettify:auto:code": "prettier --list-different --write \"{.github,src}/**/*.{ts,yaml,yml}\"",
+		"prettify:auto:code": "prettier --list-different --write \"{.github,src,test}/**/*.{ts,yaml,yml}\"",
 		"prettify:auto:package-json": "prettier-package-json --expand-users --use-tabs=true --write ./package.json",
 		"prettify:raw:code": "prettier --list-different --write",
 		"prettify:raw:package-json": "prettier-package-json --expand-users --use-tabs=true --write",
