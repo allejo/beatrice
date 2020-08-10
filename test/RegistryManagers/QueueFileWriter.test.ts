@@ -145,4 +145,63 @@ describe("QueueFileWriter", () => {
 
 		expect(writer.write()).to.equal(expected);
 	});
+
+	it("should handle multiple calls to replaceLines", () => {
+		const content = outdent`
+			import { whatever } from 'dependency-hell';
+
+			/**
+			 * @api
+			 */
+			function noop() {}
+
+			/** @api */
+			function noop2() {}
+		`;
+		const writer = new QueueFileWriter(content, "");
+
+		writer.replaceLines(
+			8,
+			8,
+			outdent`
+			/**
+			 * The new and approved no-op function!
+			 *
+			 * @api
+			 * @since 2.0.0
+			 */
+		`.split("\n"),
+		);
+
+		writer.replaceLines(
+			3,
+			5,
+			outdent`
+			/**
+			 * @api
+			 * @since 1.0.0
+			 */
+		`.split("\n"),
+		);
+
+		const expected = outdent`
+			import { whatever } from 'dependency-hell';
+
+			/**
+			 * @api
+			 * @since 1.0.0
+			 */
+			function noop() {}
+
+			/**
+			 * The new and approved no-op function!
+			 *
+			 * @api
+			 * @since 2.0.0
+			 */
+			function noop2() {}
+		`;
+
+		expect(writer.write()).to.equal(expected);
+	});
 });

@@ -92,6 +92,8 @@ export class QueueFileWriter {
 					newContent[offset + lineNo] = content;
 				} else {
 					newContent.splice(offset + lineNo, 1, ...content);
+
+					offset += content.length - 1;
 				}
 			}
 		});
