@@ -57,8 +57,8 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 					namespace: ast.name,
 				});
 			});
-		} else if (ast.kind === "class") {
-			assumeType<Class>(ast);
+		} else if (ast.kind === "class" || ast.kind === "trait" || ast.kind === "interface") {
+			assumeType<Class | Interface | Trait>(ast);
 
 			const className = PhpRegistryBuilder.getName(ast.name);
 
