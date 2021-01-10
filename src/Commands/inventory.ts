@@ -50,7 +50,5 @@ export default class Inventory extends Command {
 
 		const applier = new PhpRegistryApplier();
 		applier.apply(args.repoDir, srcDirs, apiDiff);
-
-		console.log(JSON.stringify(apiDiff));
 	}
 }

@@ -1,7 +1,7 @@
 import { readFileSync } from "fs";
 
 import autoBind from "auto-bind";
-import Engine, { Class, Function, Identifier, Namespace, Node, Program } from "php-parser";
+import { Class, Engine, Function, Identifier, Interface, Namespace, Node, Program, Trait } from "php-parser";
 
 import { assumeType } from "../../Utilities/TypeCasting";
 import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
@@ -27,7 +27,7 @@ export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 
 	parseFile(filePath: string): PhpFile {
 		const content = readFileSync(filePath, "utf8");
-		const ast: Program = this.parser.parseCode(content);
+		const ast: Program = this.parser.parseCode(content, "");
 		const fileRegistry: PhpFile = {
 			file: filePath,
 			classes: {},

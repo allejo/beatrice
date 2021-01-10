@@ -3242,9 +3242,9 @@ performance-now@^2.1.0:
   resolved "https://registry.yarnpkg.com/performance-now/-/performance-now-2.1.0.tgz#6309f4e0e5fa913ec1c69307ae364b4b377c9e7b"
   integrity sha1-Ywn04OX6kT7BxpMHrjZLSzd8nns=
 
-"php-parser@git+https://github.com/allejo/php-parser#3c76801b70d9dca42f0ee8ad169d27f22f01f2ce":
+"php-parser@git+https://github.com/allejo/php-parser.git#ec265f2fd44c46a0bb3a346b72717cef05698966":
   version "3.0.1"
-  resolved "git+https://github.com/allejo/php-parser#3c76801b70d9dca42f0ee8ad169d27f22f01f2ce"
+  resolved "git+https://github.com/allejo/php-parser.git#ec265f2fd44c46a0bb3a346b72717cef05698966"
 
 picomatch@^2.0.5, picomatch@^2.2.1:
   version "2.2.2"
