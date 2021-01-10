@@ -18,17 +18,19 @@ export class DumbJavaDocParser {
 	 */
 	private readonly docBlockBodyRe = XRegExp(
 		`
-			^(?<indentation>[ \\t]*) # Capture our indentation so we can reapply it when we write out the new doc
+			^[ \\t]* # Whitespace indentation and asterisk at the beginning of the line
 
 			# Capture single comments or multiple line
 			(?:
-				(?:\\/\\*\\*(?<singleLine>.+)\\*\\/) | # Match _single_ lines with the following pattern /** ... */
-				(?:\\*(?<multiLine>$|(?:[^*/].*)))     # Match any line that starts with a *, this is for lines in
-				                                       # between /** and */ for multiline doc blocks
+				(?:\\/\\*\\*(?<singleLine>.+)\\*\\/) |         # Match _single_ lines with the following pattern /** ... */
+				(?:\\*(?!\\/)(?<multiLine>$|(?:(?!\\*\\/).)+)) # Match any line that starts with a *, this is for lines in
+				                                               # between /** and */ for multiline doc blocks
 			)
 		`,
 		"gmx", // 'x' allows for comments and free spacing (XRegExp)
 	);
+
+	private readonly indentation: string = "";
 
 	/**
 	 * The parsed body of the docblock without the asterisks of the comment.
@@ -39,6 +41,8 @@ export class DumbJavaDocParser {
 	 * @since future
 	 */
 	constructor(public readonly comment: string) {
+		this.indentation = XRegExp.exec(this.comment, /(?<indentation>[ \t]*)\/\*\*/)?.groups?.indentation ?? "";
+
 		XRegExp.forEach(this.comment, this.docBlockBodyRe, (matches: MatchArray) => {
 			assumeType<DocBlockMatch>(matches);
 
@@ -68,14 +72,16 @@ export class DumbJavaDocParser {
 	/**
 	 * @since future
 	 */
-	writeAsArray(indentation: string = ""): string[] {
-		return [`${indentation}/**`, ...this.body.map(line => `${indentation} * ${line}`), `${indentation} */`];
+	writeAsArray(indentation?: string): string[] {
+		const indent = indentation ?? this.indentation;
+
+		return [`${indent}/**`, ...this.body.map(line => `${indent} * ${line}`.trimRight()), `${indent} */`];
 	}
 
 	/**
 	 * @since future
 	 */
-	write(indentation: string = ""): string {
+	write(indentation?: string): string {
 		return this.writeAsArray(indentation).join(`\n`);
 	}
 }

@@ -55,4 +55,28 @@ describe("DumbJavaDocParser", () => {
 			 */
 		`);
 	});
+
+	it("should preserve the indentation of the docblock", () => {
+		const raw = outdent`
+			// This is the correct indentation
+				/**
+				 * @param string $variable Some string variable as an argument
+				 *
+				 * @return string
+				 */
+		`;
+		const actual = new DumbJavaDocParser(raw);
+		actual.addTag("since", "1.0.2");
+
+		expect(actual.write()).to.equal(
+			[
+				"\t/**",
+				"\t * @param string $variable Some string variable as an argument",
+				"\t *",
+				"\t * @return string",
+				`\t * @since 1.0.2`,
+				"\t */",
+			].join("\n"),
+		);
+	});
 });
