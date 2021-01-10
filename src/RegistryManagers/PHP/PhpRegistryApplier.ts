@@ -1,7 +1,7 @@
 import { readFileSync, writeFileSync } from "fs";
 
 import autoBind from "auto-bind";
-import Engine, { Class, CommentBlock, Function, Location, Namespace, Node, Program } from "php-parser";
+import { Class, CommentBlock, Engine, Function, Location, Namespace, Node, Program } from "php-parser";
 
 import { walkRepository } from "../../Utilities/Filesystem";
 import { assumeType } from "../../Utilities/TypeCasting";
@@ -134,7 +134,7 @@ export class PhpRegistryApplier implements IRegistryApplier<PhpRegistryEntry> {
 		let ast: Program;
 
 		try {
-			ast = this.parser.parseCode(fileContent);
+			ast = this.parser.parseCode(fileContent, "");
 		} catch (e) {
 			throw new AstParserError(phpFilePath, e);
 		}
