@@ -79,4 +79,27 @@ describe("DumbJavaDocParser", () => {
 			].join("\n"),
 		);
 	});
+
+	it("should persist spacing inside of the phpdoc", () => {
+		const raw = outdent`
+			/**
+			 * Hello World
+			 *
+			 * @param string $hello This is a very long message that should be wrapping two
+			 *                      separate lines.
+			 *
+			 * @return array
+			 */
+		`;
+		const actual = new DumbJavaDocParser(raw);
+
+		expect(actual.body).to.deep.equal([
+			"Hello World",
+			"",
+			"@param string $hello This is a very long message that should be wrapping two",
+			"                     separate lines.",
+			"",
+			"@return array",
+		]);
+	});
 });

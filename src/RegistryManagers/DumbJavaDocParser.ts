@@ -22,9 +22,11 @@ export class DumbJavaDocParser {
 
 			# Capture single comments or multiple line
 			(?:
-				(?:\\/\\*\\*(?<singleLine>.+)\\*\\/) |         # Match _single_ lines with the following pattern /** ... */
-				(?:\\*(?!\\/)(?<multiLine>$|(?:(?!\\*\\/).)+)) # Match any line that starts with a *, this is for lines in
-				                                               # between /** and */ for multiline doc blocks
+				# Match _single_ lines with the following pattern /** ... */
+				(?:\\/\\*\\*[ ]?(?<singleLine>.+?)[ ]?\\*\\/) |
+
+				# Match any line that starts with a *, this is for lines in between /** and */ for multiline doc blocks
+				(?:\\*(?!\\/)[ ]?(?<multiLine>$|(?:(?!\\*\\/).)+))
 			)
 		`,
 		"gmx", // 'x' allows for comments and free spacing (XRegExp)
@@ -46,7 +48,10 @@ export class DumbJavaDocParser {
 		XRegExp.forEach(this.comment, this.docBlockBodyRe, (matches: MatchArray) => {
 			assumeType<DocBlockMatch>(matches);
 
-			this.body.push((matches.multiLine ?? matches.singleLine ?? "").trim());
+			const line = matches.multiLine ?? matches.singleLine ?? "";
+			const trimmed = line.trim();
+
+			this.body.push(trimmed.length === 0 ? trimmed : line);
 		});
 	}
 
