@@ -15,7 +15,7 @@ export default class Inventory extends Command {
 		lang: flags.string({ char: "l", description: "The language to parse" }),
 		force: flags.boolean({ char: "f" }),
 		prereleases: flags.boolean({ char: "p" }),
-		tagOrder: flags.enum({ char: "o", options: ["first", "last"] }),
+		tagOrder: flags.enum({ char: "o", options: ["first", "last"], default: "first" }),
 	};
 
 	static args = [
