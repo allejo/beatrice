@@ -102,4 +102,18 @@ describe("DumbJavaDocParser", () => {
 			"@return array",
 		]);
 	});
+
+	it("should add a tag as the first tag", () => {
+		const raw = outdent`
+			/**
+			 * Hello world
+			 *
+			 * @param string $hello
+			 */
+		`;
+		const actual = new DumbJavaDocParser(raw);
+		actual.addTag("since", "1.0.0", actual.AS_FIRST_TAG);
+
+		expect(actual.body).to.deep.equal(["Hello world", "", "@since 1.0.0", "@param string $hello"]);
+	});
 });

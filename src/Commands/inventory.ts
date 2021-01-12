@@ -1,5 +1,6 @@
 import { Command, flags } from "@oclif/command";
 
+import { IRegistryOptions, strToTagOrder } from "../RegistryManagers/IRegistryOptions";
 import { PhpRegistryApplier } from "../RegistryManagers/PHP/PhpRegistryApplier";
 import { PhpRegistryBuilder } from "../RegistryManagers/PHP/PhpRegistryBuilder";
 import { PhpRegistryReducer } from "../RegistryManagers/PHP/PhpRegistryReducer";
@@ -14,6 +15,7 @@ export default class Inventory extends Command {
 		lang: flags.string({ char: "l", description: "The language to parse" }),
 		force: flags.boolean({ char: "f" }),
 		prereleases: flags.boolean({ char: "p" }),
+		tagOrder: flags.enum({ char: "o", options: ["first", "last"] }),
 	};
 
 	static args = [
@@ -23,8 +25,11 @@ export default class Inventory extends Command {
 
 	async run() {
 		const { args, flags } = this.parse(Inventory);
+		const registryOptions: Partial<IRegistryOptions> = {
+			tagOrder: strToTagOrder(flags.tagOrder),
+		};
 
-		const phpAstManager = new PhpRegistryBuilder();
+		const phpAstManager = new PhpRegistryBuilder(registryOptions);
 		const vcsManager = new NodeGitManager(args.repoDir, this.log, this.error);
 		vcsManager.includePreReleases = flags.prereleases;
 
@@ -48,7 +53,7 @@ export default class Inventory extends Command {
 		const reducer = new PhpRegistryReducer(args.repoDir);
 		const apiDiff = reducer.reduce(fullVersionHistory);
 
-		const applier = new PhpRegistryApplier();
+		const applier = new PhpRegistryApplier(registryOptions);
 		applier.apply(args.repoDir, srcDirs, apiDiff);
 	}
 }

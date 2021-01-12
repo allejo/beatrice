@@ -71,7 +71,7 @@ export class DumbJavaDocParser {
 			return;
 		}
 
-		this.body = this.body.splice(position, 0, tagLine);
+		this.body.splice(position, 0, tagLine);
 	}
 
 	/**
@@ -88,5 +88,15 @@ export class DumbJavaDocParser {
 	 */
 	write(indentation?: string): string {
 		return this.writeAsArray(indentation).join(`\n`);
+	}
+
+	get AS_FIRST_TAG(): number {
+		for (let i = 0; i < this.body.length; i++) {
+			if (this.body[i].match(/@\w/) !== null) {
+				return i;
+			}
+		}
+
+		return -1;
 	}
 }

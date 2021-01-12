@@ -5,13 +5,14 @@ import { Class, Engine, Function, Identifier, Interface, Namespace, Node, Progra
 
 import { assumeType } from "../../Utilities/TypeCasting";
 import { BaseRegistryBuilder } from "../BaseRegistryBuilder";
+import { IRegistryOptions } from "../IRegistryOptions";
 import { PhpFile } from "./PhpRegistryTypes";
 
 export class PhpRegistryBuilder extends BaseRegistryBuilder<PhpFile> {
 	private readonly parser: Engine;
 
-	constructor() {
-		super();
+	constructor(options: Partial<IRegistryOptions>) {
+		super(options);
 
 		this.parser = new Engine({
 			parser: {
